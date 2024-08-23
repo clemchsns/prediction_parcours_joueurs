@@ -5,7 +5,6 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.neighbors import KNeighborsClassifier
 from xgboost import XGBClassifier
-import os
 
 df_var_imp_detect_U19 = pd.read_csv("df_var_importantes_detect_U19.csv",sep=",")
 df_var_imp_detect_U19 = df_var_imp_detect_U19.drop(columns=['Unnamed: 0'])
@@ -307,8 +306,8 @@ if st.sidebar.button('Predict'):
    # Concatener la valeur de age_cat_actuel et age_cat_pred pour obtenir le nom du modèle (sep = "_")
    
    # Choix du model
-   model_path = os.path.join("./model", model_choisis)
-   model = joblib.load(model_path)
+   
+   model = joblib.load(model_choisis)
       
    # Extraction des informations du joueur
    player_data = data[data['NOM_COMPLET'] == player_name].iloc[0]
