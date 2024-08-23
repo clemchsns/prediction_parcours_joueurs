@@ -1,7 +1,5 @@
 import streamlit as st
 import pandas as pd
-import joblib
-import numpy as np
 
 pd.set_option('display.max_columns', None)  # Afficher toutes les colonnes
 pd.set_option('display.width', None)    
