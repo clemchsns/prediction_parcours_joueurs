@@ -200,23 +200,56 @@ if uploaded_data is not None:
         col = ['NB_MIN_JOUE_PAR_MATCH_PAR_SAISON', 'NB_BUT_PAR_MIN_JOUE_PAR_SAISON']
         bd_comp = bd_comp[col]
 
-    
-    # on calcul la médiane pour chaque colonne
-    bd_comp = bd_comp.rename(columns={col[0]: 'Nombre de minutes jouées par match sur une saison (médiane)',
-                                                        col[1]: 'Nombre de buts inscrits par minutes jouées sur une saison (médiane)'})
-    median = bd_comp.median()
-
-    # st.write(df_player.columns)
-    # on calcul la médiane pour le joueur
-    df_player_median = df_player[col].rename(columns={col[0]: 'Nombre de minutes jouées par match sur une saison (médiane)',
-                                                        col[1]: 'Nombre de buts inscrits par minutes jouées sur une saison (médiane)'})
+    df_player_median = df_player[col]
     median_joueur = df_player_median.median()
     # on compare les deux
     st.subheader("Comparaison avec les joueurs sur la période 2013 à 2023")
-    st.write(median)
-    st.write(median_joueur)
+    st.write("Nous allons comparer les statistiques du joueur avec les autres joueurs ayant le même poste que lui, sur la période 2013 à 2023.")
+    st.write("Nous allons comparer les statistiques suivantes :")
+    st.write(" - Nombre de minutes jouées par match sur une saison (médiane)")
+    st.write(" - Nombre de buts inscrits par minutes jouées sur une saison (médiane)")
+    st.write("Les résultats seront affichés sous forme de quartiles, pour chaque statistique. Le joueur sera classé dans un quartile en fonction de ses statistiques.")
+    st.write("Le quartile 1 correspond aux joueurs ayant les statistiques les plus faibles, tandis que le quartile 4 correspond aux joueurs ayant les statistiques les plus élevées.")
 
+    def determine_quartile(value, data_column):
+        q1 = data_column.quantile(0.25)
+        q2 = data_column.quantile(0.50)
+        q3 = data_column.quantile(0.75)
+        
+        if value <= q1:
+            return 1
+        elif value <= q2:
+            return 2
+        elif value <= q3:
+            return 3
+        else:
+            return 4
 
+    # res_joueur_quartile = pd.DataFrame()
+    # Appliquer la fonction aux variables dans df_player_median
+
+    res_joueur_quartile0 = determine_quartile(median_joueur[col[0]], bd_comp[col[0]])
+    res_joueur_quartile1 = determine_quartile(median_joueur[col[1]], bd_comp[col[1]])
+
+    # Créé un dataframe avec les résultats
+    res_joueur_quartile = pd.DataFrame({
+    'Variable': [
+        'Nombre de minutes jouées par match sur une saison (médiane)',
+        'Nombre de buts inscrits par minutes jouées sur une saison (médiane)'
+    ],
+    'VALEUR': [
+        median_joueur[col[0]],
+        median_joueur[col[1]]
+    ],
+    'QUARTILE': [
+        res_joueur_quartile0,
+        res_joueur_quartile1
+    ]
+})
+
+    # res_joueur_quartile = res_joueur_quartile.rename(columns={col[0]: 'Nombre de minutes jouées par match sur une saison (médiane)',
+    #                                                     col[1]: 'Nombre de buts inscrits par minutes jouées sur une saison (médiane)'})
+    st.write(res_joueur_quartile)
     #############################################
 
     st.subheader("Parcours en club")
